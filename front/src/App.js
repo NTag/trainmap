@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import classNames from 'classnames';
 import Autosuggest from 'react-autosuggest';
 import styles from './App.module.css';
 import suggestTheme from './Typeahead.module.css';
 import { API_URL } from './config';
+
+const debounce = (func, delay) => {
+  let timer;
+
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => func(...args), delay);
+  };
+};
 
 const renderSuggestion = (suggestion) => (
   <div>
@@ -22,7 +31,7 @@ const StationInput = ({ placeholder, onSelected, selected }) => {
     }
   }, [selected]);
 
-  const onSuggestionsFetchRequested = async ({ value }) => {
+  const fetchSuggestions = async ({ value }) => {
     const response = await fetch(`${API_URL}/stations?name=${value}`);
     const data = await response.json();
     setSuggestions(data);
@@ -30,12 +39,13 @@ const StationInput = ({ placeholder, onSelected, selected }) => {
   const onSuggestionsClearRequested = () => {
     setSuggestions([]);
   };
+  const onSuggestionsFetchRequested = useCallback(debounce(fetchSuggestions, 200), []);
 
   return (
     <Autosuggest
       theme={suggestTheme}
       suggestions={suggestions}
-      onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+      onSuggestionsFetchRequested={debounce(onSuggestionsFetchRequested, 200)}
       onSuggestionsClearRequested={onSuggestionsClearRequested}
       getSuggestionValue={getSuggestionValue}
       renderSuggestion={renderSuggestion}
