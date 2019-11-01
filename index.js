@@ -9,6 +9,7 @@ const app = express();
 const port = 5001;
 
 app.use(cors());
+app.use(express.static('front/build'));
 
 const RAILDAR_URL = 'http://raildar.fr/osrm-engine/viaroute?z=10&output=json&alt=false';
 

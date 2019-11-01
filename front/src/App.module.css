@@ -1,0 +1,8 @@
+.Result {
+  padding: 2rem;
+  text-align: center;
+}
+.Result textarea {
+  height: 30vh;
+  margin-bottom: 2rem;
+}
