@@ -4,6 +4,7 @@ const cors    = require('cors');
 const fs      = require('fs');
 const chalk   = require('chalk');
 const parse   = require('csv-parse');
+const Fuse    = require('fuse.js');
 
 const app = express();
 const port = 5001;
@@ -14,6 +15,7 @@ app.use(express.static('front/build'));
 const RAILDAR_URL = 'http://raildar.fr/osrm-engine/viaroute?z=10&output=json&alt=false';
 
 const stationsById = {};
+const stations = [];
 
 const loadingStations = new Promise((resolve, reject) => {
   fs.readFile('./stations.csv', { encoding: 'utf8' }, (err, data) => {
@@ -25,7 +27,13 @@ const loadingStations = new Promise((resolve, reject) => {
     console.log(`${chalk.blue('[i]')} Loading stations…`);
     parse(data, { columns: true, delimiter: ';' }, (err, s) => {
       s.forEach(station => {
+        if (station['info:fr']) {
+          station.name += ` (${station['info:fr']})`;
+        }
         stationsById[station.id] = station;
+        if (station.is_suggestable === 't') {
+          stations.push(station);
+        }
       });
       console.log(`${chalk.blue('[.]')} ${chalk.green(`${s.length}`)} stations loaded.`);
 
@@ -78,6 +86,29 @@ const decodepoly = (geom) => {
   }
   return latlngs;
 };
+
+app.get('/api/stations', (req, res) => {
+  const name = req.query.name;
+
+  const options = {
+    shouldSort: true,
+    findAllMatches: true,
+    includeScore: true,
+    includeMatches: true,
+    threshold: 0.4,
+    location: 0,
+    distance: 100,
+    maxPatternLength: 32,
+    minMatchCharLength: 3,
+    keys: [
+      'name',
+      'slug',
+    ],
+  };
+  const fuse = new Fuse(stations, options);
+  const result = fuse.search(name);
+  res.send(result.slice(0, 10));
+});
 
 app.get('/api/route', async (req, res) => {
   let { dep, arr } = req.query;

@@ -1,23 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
+import Autosuggest from 'react-autosuggest';
 import styles from './App.module.css';
+import suggestTheme from './Typeahead.module.css';
 import { API_URL } from './config';
 
+const renderSuggestion = (suggestion) => (
+  <div>
+    {suggestion.item.name}
+  </div>
+);
+const getSuggestionValue = (suggestion) => suggestion.item.name;
+
+const StationInput = ({ placeholder, onSelected, selected }) => {
+  const [text, setText] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+
+  useEffect(() => {
+    if (!selected) {
+      setText('');
+    }
+  }, [selected]);
+
+  const onSuggestionsFetchRequested = async ({ value }) => {
+    const response = await fetch(`${API_URL}/stations?name=${value}`);
+    const data = await response.json();
+    setSuggestions(data);
+  };
+  const onSuggestionsClearRequested = () => {
+    setSuggestions([]);
+  };
+
+  return (
+    <Autosuggest
+      theme={suggestTheme}
+      suggestions={suggestions}
+      onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+      onSuggestionsClearRequested={onSuggestionsClearRequested}
+      getSuggestionValue={getSuggestionValue}
+      renderSuggestion={renderSuggestion}
+      onSuggestionSelected={(event, { suggestion }) => onSelected(suggestion.item)}
+      inputProps={{
+        className: 'input',
+        placeholder,
+        value: text,
+        onChange: (e, { newValue }) => setText(newValue),
+      }}
+    />
+  );
+};
+
 const FormAdd = ({ onAdd }) => {
-  const [fromText, setFromText] = useState('');
-  const [toText, setToText] = useState('');
+  const [fromStation, setFromStation] = useState();
+  const [toStation, setToStation] = useState();
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const request = await fetch(`${API_URL}/route/?dep=${fromText}&arr=${toText}`);
+      const request = await fetch(`${API_URL}/route/?dep=${fromStation.id}&arr=${toStation.id}`);
       const geojson = await request.json();
-      onAdd({ fromText, toText, geojson });
+      onAdd({ fromText: fromStation.name, toText: toStation.name, geojson });
       setLoading(false);
-      setFromText('');
-      setToText('');
+      setFromStation();
+      setToStation();
     } catch (e) {
       console.error(e);
       setLoading(false);
@@ -32,7 +79,7 @@ const FormAdd = ({ onAdd }) => {
         </div>
         <div className="field-body">
           <div className="field">
-            <input className="input" type="text" placeholder="Paris Nord" value={fromText} onChange={e => setFromText(e.target.value)} />
+            <StationInput placeholder="Paris Nord" onSelected={setFromStation} selected={!!fromStation} />
           </div>
         </div>
       </div>
@@ -42,12 +89,12 @@ const FormAdd = ({ onAdd }) => {
         </div>
         <div className="field-body">
           <div className="field">
-            <input className="input" type="text" placeholder="Berlin" value={toText} onChange={e => setToText(e.target.value)} />
+            <StationInput placeholder="Berlin Hbf" onSelected={setToStation} selected={!!toStation} />
           </div>
         </div>
       </div>
       <div className="column">
-        <button className={classNames('button is-primary', { 'is-loading': loading })} type="submit" disabled={!fromText || !toText}>Add</button>
+        <button className={classNames('button is-primary', { 'is-loading': loading })} type="submit" disabled={!fromStation || !toStation}>Add</button>
       </div>
     </form>
   );

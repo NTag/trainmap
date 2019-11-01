@@ -1,0 +1,15 @@
+.container {
+  position: absolute;
+  z-index: 100;
+}
+.suggestionsList {
+  height: 0px;
+}
+.suggestion {
+  background-color: white;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.suggestionHighlighted {
+  font-weight: bold;
+}
