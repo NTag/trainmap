@@ -1,0 +1,8 @@
+version: '2'
+services:
+  web:
+    build: ./
+    tty: true
+    environment:
+      NODE_ENV: production
+      TERM: xterm-256color`
