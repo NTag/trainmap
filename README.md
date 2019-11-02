@@ -9,6 +9,7 @@ You can import this GeoJSON in https://kepler.gl/demo for example to vizualise i
 - https://trainmap.ntag.fr
 - `GET https://trainmap.ntag.fr/api/route?dep=4916&arr=8267` // Trainline stations IDs
 - `GET https://trainmap.ntag.fr/api/route?dep=48,2&arr=52,13` // lat,lng coordinates
+- `GET https://trainmap.ntag.fr/api/route?dep=4916&arr=8267&simplify=1` // Use `?simplify=1` to get a simplified Polygon
 
 ## Development
 ### Installation

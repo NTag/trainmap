@@ -15,6 +15,7 @@
     "cors": "^2.8.5",
     "csv-parse": "^4.6.5",
     "express": "^4.17.1",
-    "fuse.js": "^3.4.5"
+    "fuse.js": "^3.4.5",
+    "simplify-geojson": "^1.0.3"
   }
 }

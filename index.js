@@ -1,10 +1,11 @@
-const express = require('express');
-const axios   = require('axios');
-const cors    = require('cors');
-const fs      = require('fs');
-const chalk   = require('chalk');
-const parse   = require('csv-parse');
-const Fuse    = require('fuse.js');
+const express         = require('express');
+const axios           = require('axios');
+const cors            = require('cors');
+const fs              = require('fs');
+const chalk           = require('chalk');
+const parse           = require('csv-parse');
+const Fuse            = require('fuse.js');
+const simplifyGeojson = require('simplify-geojson');
 
 const app = express();
 const port = 5001;
@@ -111,7 +112,7 @@ app.get('/api/stations', (req, res) => {
 });
 
 app.get('/api/route', async (req, res) => {
-  let { dep, arr } = req.query;
+  let { dep, arr, simplify } = req.query;
   if (stationsById[dep] && stationsById[arr]) {
     dep = stationsById[dep].latitude + ',' + stationsById[dep].longitude;
     arr = stationsById[arr].latitude + ',' + stationsById[arr].longitude;
@@ -146,7 +147,8 @@ app.get('/api/route', async (req, res) => {
           "coordinates": [coordinates],
         },
       };
-      res.send(geojson);
+      const finalGeojson = simplify == '1' ? simplifyGeojson(geojson, 0.01) : geojson;
+      res.send(finalGeojson);
     } else {
       res.sendStatus(404);
     }
