@@ -118,6 +118,9 @@ app.get('/api/route', async (req, res) => {
     arr = stationsById[arr].latitude + ',' + stationsById[arr].longitude;
   }
 
+  dep = dep.replace(/[^0-9,.-]/g, '');
+  arr = arr.replace(/[^0-9,.-]/g, '');
+
   if (dep === '48.841172,2.320514') {
     dep = '48.839526,2.318630';
   }

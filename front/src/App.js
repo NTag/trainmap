@@ -69,7 +69,7 @@ const FormAdd = ({ onAdd }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const request = await fetch(`${API_URL}/route/?dep=${fromStation.id}&arr=${toStation.id}`);
+      const request = await fetch(`${API_URL}/route/?simplify=1&dep=${fromStation.id}&arr=${toStation.id}`);
       const geojson = await request.json();
       onAdd({ fromText: fromStation.name, toText: toStation.name, geojson });
       setLoading(false);
@@ -180,6 +180,11 @@ const App = () => {
   return (
     <div>
       <h1 className="title has-text-centered">TrainMap</h1>
+      <h3 className="subtitle has-text-centered">
+        <a title="This project is open-source" href="https://github.com/NTag/trainmap" target="_blank" rel="noopener noreferrer">Github</a>
+        {' • '}
+        Everything comes from <a title="Final logic comes entirely from Raildar ❤️" href="http://raildar.fr/osrm/osrm.html" target="_blank" rel="noopener noreferrer">Raildar</a>
+      </h3>
       <FormAdd onAdd={onAdd} />
       <Trips trips={trips} onRemove={onRemove} />
       <div className={styles.Result}>
