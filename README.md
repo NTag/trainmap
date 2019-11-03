@@ -34,4 +34,5 @@ npm start
 - `GET http://localhost:5001/api/route?dep=48,2&arr=52,13`
 
 ## Acknowledgment
-Routing from http://raildar.fr/osrm-engine/ 🙌
+Routing from http://raildar.fr/osrm-engine/ 🙌.
+Stations file by Trainline: https://github.com/trainline-eu/stations.
