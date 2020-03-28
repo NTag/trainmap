@@ -17,5 +17,8 @@
     "express": "^4.17.1",
     "fuse.js": "^3.4.5",
     "simplify-geojson": "^1.0.3"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.2"
   }
 }
