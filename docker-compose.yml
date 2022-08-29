@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  backend:
+    image: docker.ntag.fr/trainmap:latest
+    ports:
+      - "20060:5001"
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 30s
+        order: start-first
