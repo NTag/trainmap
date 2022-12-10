@@ -13,7 +13,7 @@ const port = 5001;
 app.use(cors());
 app.use(express.static('front/build'));
 
-const RAILDAR_URL = 'http://raildar.fr/osrm-engine/viaroute?z=10&output=json&alt=false';
+const OSRM_URL = 'https://signal.eu.org/osm/eu/route/v1/train';
 
 const stationsById = {};
 const stations = [];
@@ -86,7 +86,7 @@ const decodepoly = (geom) => {
     if (res & 1) delta = ~delta;
     lng += delta;
 
-    latlngs.push([lng / 1e6, lat / 1e6]);
+    latlngs.push([lng / 1e5, lat / 1e5]);
   }
   return latlngs;
 };
@@ -121,18 +121,18 @@ app.get('/api/stations', (req, res) => {
 app.get('/api/route', async (req, res) => {
   let { dep, arr, simplify } = req.query;
   if (stationsById[dep] && stationsById[arr]) {
-    dep = stationsById[dep].latitude + ',' + stationsById[dep].longitude;
-    arr = stationsById[arr].latitude + ',' + stationsById[arr].longitude;
+    dep = stationsById[dep].longitude + ',' + stationsById[dep].latitude;
+    arr = stationsById[arr].longitude + ',' + stationsById[arr].latitude;
   }
 
   dep = dep.replace(/[^0-9,.-]/g, '');
   arr = arr.replace(/[^0-9,.-]/g, '');
 
-  if (dep === '48.841172,2.320514') {
-    dep = '48.839526,2.318630';
+  if (dep === '2.320514,48.841172') {
+    dep = '2.318630,48.839526';
   }
-  if (arr === '48.841172,2.320514') {
-    arr = '48.839526,2.318630';
+  if (arr === '2.320514,48.841172') {
+    arr = '2.318630,48.839526';
   }
 
   const id = `${dep}-${arr}`;
@@ -143,13 +143,13 @@ app.get('/api/route', async (req, res) => {
     if (fs.existsSync(file)) {
       data = JSON.parse(await readFile(file));
     } else {
-      const response = await axios.get(RAILDAR_URL + `&loc=${dep}&loc=${arr}`);
+      const response = await axios.get(`${OSRM_URL}/${dep};${arr}`);
       data = response.data;
       fs.writeFile(file, JSON.stringify(data), { encoding: 'utf8' }, () => {});
     }
 
-    if (data.route_geometry) {
-      const coordinates = decodepoly(data.route_geometry);
+    if (data.routes.length > 0) {
+      const coordinates = decodepoly(data.routes[0].geometry);
       const geojson = {
         type: 'Feature',
         geometry: {

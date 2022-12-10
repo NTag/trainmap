@@ -183,7 +183,7 @@ const App = () => {
       <h3 className="subtitle has-text-centered">
         <a title="This project is open-source" href="https://github.com/NTag/trainmap" target="_blank" rel="noopener noreferrer">Github</a>
         {' • '}
-        Everything comes from <a title="Final logic comes entirely from Raildar ❤️" href="http://raildar.fr/osrm/osrm.html" target="_blank" rel="noopener noreferrer">Raildar</a>
+        Everything comes from <a title="Final logic comes entirely from signal.eu.org ❤️" href="https://signal.eu.org/osm/" target="_blank" rel="noopener noreferrer">signal.eu.org</a>
       </h3>
       <FormAdd onAdd={onAdd} />
       <Trips trips={trips} onRemove={onRemove} />
