@@ -35,7 +35,7 @@ npm start
 
 - Open http://localhost:3000 for the web interface
 - `GET http://localhost:5001/api/route?dep=4916&arr=8267`
-- `GET http://localhost:5001/api/route?dep=48,2&arr=52,13`
+- `GET http://localhost:5001/api/route?dep=2,48&arr=13,52`
 
 ## Acknowledgment
 

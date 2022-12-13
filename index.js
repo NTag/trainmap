@@ -136,14 +136,14 @@ app.get('/api/route', async (req, res) => {
   }
 
   const id = `${dep}-${arr}`;
-  const file = `./data/${id}.json`;
+  const file = `./data/${id}.v1.json`;
 
   try {
     let data;
     if (fs.existsSync(file)) {
       data = JSON.parse(await readFile(file));
     } else {
-      const response = await axios.get(`${OSRM_URL}/${dep};${arr}`);
+      const response = await axios.get(`${OSRM_URL}/${dep};${arr}?overview=full`);
       data = response.data;
       fs.writeFile(file, JSON.stringify(data), { encoding: 'utf8' }, () => {});
     }
