@@ -16,7 +16,7 @@
     "csv-parse": "^4.6.5",
     "express": "^4.17.1",
     "fuse.js": "^3.4.5",
-    "simplify-geojson": "^1.0.3"
+    "simplify-geojson": "^1.0.5"
   },
   "devDependencies": {
     "prettier": "^2.0.2"
